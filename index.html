@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collatz Conjecture</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/lux/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="mt-5 mb-3">
+      <a class="text-warning display-6" href="https://en.wikipedia.org/wiki/Collatz_conjecture" target="_blank">Collatz Conjecture</a>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-group mb-3">
+          <input class="form-control" type="number" value="6">
+          <button class="btn btn-outline-warning">RUN</button>
+        </div>
+        <span></span>
+        <pre class="fs-3"></pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.body.setAttribute("data-bs-theme", "dark")
+    document.body.className = "bg-black";
+
+    const ipt = document.querySelector("input");
+    const btn = document.querySelector("button");
+    const pre = document.querySelector("pre");
+    const spn = document.querySelector("span");
+    let count = 1;
+
+    function isEven(n) {
+      return n % 2 === 0;
+    }
+
+    function d2(n) {
+      return n / 2;
+    }
+
+    function m3p1(n) {
+      return n * 3 + 1;
+    }
+
+    function display(n) {
+      const strInt = ipt.value;
+      return ` ${n}`.padStart(strInt.length * 5, '_');
+    }
+
+    function calculateCollatz(number) {  
+      function appendCollatzSteps(currentNumber) {
+        if (currentNumber > 1) {
+          pre.textContent += `${display(currentNumber)} ${isEven(currentNumber) ? "/ 2" : "* 3 + 1"}\n`;
+        } else {
+          pre.textContent += `${display(currentNumber)}`;
+        }
+        
+        spn.textContent = `Iterations: ${count++}`;
+        
+        if (currentNumber === 1) return;
+
+        setTimeout(() => {
+          if (isEven(currentNumber)) {
+            appendCollatzSteps(d2(currentNumber));
+          } else {
+            appendCollatzSteps(m3p1(currentNumber));
+          }
+        }, 500);
+      }
+
+      appendCollatzSteps(number);
+    }
+
+    function handleIpt() {
+      if (parseInt(this.value) < 1) {
+        this.value = 1;
+      }
+    }
+
+    function handleBtn() {
+      pre.textContent = "";
+      spn.textContent = "";
+
+      const int = parseInt(ipt.value);
+
+      calculateCollatz(int);
+    }
+
+    ipt.addEventListener("change", handleIpt);
+    ipt.addEventListener("keyup", handleIpt);
+    btn.addEventListener("click", handleBtn);
+
+    function scrollToBottom() {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    const observer = new MutationObserver(() => window.scrollTo(0, document.body.scrollHeight));
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  </script>
+</body>
+</html>
